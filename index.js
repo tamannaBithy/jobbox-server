@@ -142,16 +142,26 @@ const run = async () => {
 
     app.get("/posted-jobs/:id", async (req, res) => {
       const id = req.params.id;
-      // const query = {
-      //   $elemMatch: {
-      //     userId: id,
-      //   },
-      // };
       const cursor = jobCollection.find({
         userId: id,
       });
       const result = await cursor.toArray();
       res.send({ status: true, data: result });
+    });
+
+    app.patch("/close", async (req, res) => {
+      const jobId = req.body.jobId;
+
+      const filter = { _id: ObjectId(jobId) };
+      const updateDoc = {
+        $push: { jobStatus: "closed" },
+      };
+
+      const result = await jobCollection.updateOne(filter, updateDoc);
+      if (result.acknowledged) {
+        return res.send({ status: true, data: result });
+      }
+      res.send({ status: false });
     });
   } finally {
   }
