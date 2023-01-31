@@ -142,12 +142,14 @@ const run = async () => {
 
     app.get("/posted-jobs/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {
-        $elemMatch: {
-          userId: id,
-        },
-      };
-      const cursor = jobCollection.find(query);
+      // const query = {
+      //   $elemMatch: {
+      //     userId: id,
+      //   },
+      // };
+      const cursor = jobCollection.find({
+        userId: id,
+      });
       const result = await cursor.toArray();
       res.send({ status: true, data: result });
     });
