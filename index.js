@@ -1,32 +1,31 @@
 require("dotenv").config();
 const express = require("express");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
 const cors = require("cors");
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q66zrl2.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y9cyf.mongodb.net/?retryWrites=true&w=majority
+`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverApi: ServerApiVersion.v1,
 });
 
 const run = async () => {
   try {
-    const db = client.db("jobbox");
+    const db = client.db("blogPost");
     const userCollection = db.collection("user");
     const jobCollection = db.collection("job");
 
     app.post("/user", async (req, res) => {
       const user = req.body;
-
+      console.log(user);
       const result = await userCollection.insertOne(user);
-
       res.send(result);
     });
 
@@ -91,9 +90,6 @@ const run = async () => {
     app.patch("/reply", async (req, res) => {
       const userId = req.body.userId;
       const reply = req.body.reply;
-      console.log(reply);
-      console.log(userId);
-
       const filter = { "queries.id": ObjectId(userId) };
 
       const updateDoc = {
@@ -134,16 +130,25 @@ const run = async () => {
 
     app.get("/job/:id", async (req, res) => {
       const id = req.params.id;
-
       const result = await jobCollection.findOne({ _id: ObjectId(id) });
       res.send({ status: true, data: result });
     });
 
     app.post("/job", async (req, res) => {
       const job = req.body;
-
       const result = await jobCollection.insertOne(job);
+      res.send({ status: true, data: result });
+    });
 
+    app.get("/posted-jobs/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        $elemMatch: {
+          userId: id,
+        },
+      };
+      const cursor = jobCollection.find(query);
+      const result = await cursor.toArray();
       res.send({ status: true, data: result });
     });
   } finally {
