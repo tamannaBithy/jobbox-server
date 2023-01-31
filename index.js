@@ -154,7 +154,7 @@ const run = async () => {
 
       const filter = { _id: ObjectId(jobId) };
       const updateDoc = {
-        $push: { jobStatus: "closed" },
+        $set: { jobStatus: "closed" },
       };
 
       const result = await jobCollection.updateOne(filter, updateDoc);
