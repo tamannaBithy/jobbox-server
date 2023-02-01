@@ -163,6 +163,12 @@ const run = async () => {
       }
       res.send({ status: false });
     });
+
+    app.get("/candidate/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await userCollection.findOne({ _id: ObjectId(id) });
+      res.send({ status: true, data: result });
+    });
   } finally {
   }
 };
