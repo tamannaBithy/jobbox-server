@@ -170,6 +170,19 @@ const run = async () => {
       const result = await userCollection.findOne({ _id: ObjectId(id) });
       res.send({ status: true, data: result });
     });
+
+    app.patch("/approve/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { applicants: { $elemMatch: { email: email } } };
+      const updateDoc = {
+        $set: { applicants: { status: "approved" } },
+      };
+      const result = await jobCollection.updateOne(query, updateDoc);
+      if (result.acknowledged) {
+        return res.send({ status: true, data: result });
+      }
+      res.send({ status: false });
+    });
   } finally {
   }
 };
