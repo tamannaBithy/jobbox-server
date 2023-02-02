@@ -175,7 +175,8 @@ const run = async () => {
     app.patch("/approve", async (req, res) => {
       const id = req.body.id;
       const index = req.body.index;
-      const query = { [`applicants.${index}.id`]: ObjectId(id) };
+      const query = { applicants: { $elemMatch: { id: ObjectId(id) } } };
+      // const query = { [`applicants.${index}.id`]: ObjectId(id) };
       const updateDoc = {
         $set: { [`applicants.${index}.status`]: "approved" },
       };
