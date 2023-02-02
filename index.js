@@ -172,11 +172,12 @@ const run = async () => {
       res.send({ status: true, data: result });
     });
 
-    app.patch("/approve/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { applicants: { $elemMatch: { email: email } } };
+    app.patch("/approve", async (req, res) => {
+      const id = req.body.id;
+      const index = req.body.index;
+      const query = { id: ObjectId(id) };
       const updateDoc = {
-        $set: { applicants: { status: "approved" } },
+        $set: { [`applicants.${index}.status`]: "approved" },
       };
       const result = await jobCollection.updateOne(query, updateDoc);
       if (result.acknowledged) {
