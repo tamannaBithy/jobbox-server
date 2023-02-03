@@ -173,15 +173,18 @@ const run = async () => {
     });
 
     app.patch("/approve", async (req, res) => {
-      const id = req.body.id;
-      const index = req.body.index;
-      // const query = { "applicants.id": ObjectId(id) };
-      const query = { [`applicants.${index}.id`]: ObjectId(id) };
-      const updateDoc = {
-        $set: { status: "approved" },
-      };
-      // const result = await jobCollection.updateOne(query, updateDoc);
-      return await jobCollection.updateOne(query, updateDoc);
+      const id = req.body._id;
+      const applicantsId = req.body.id;
+
+      const result = await jobCollection.updateOne(
+        { _id: ObjectId(id), "applicants.id": ObjectId(applicantsId) },
+        {
+          $set: {
+            "applicants.$.status": "approved",
+          },
+        }
+      );
+
       if (result.acknowledged) {
         return res.send({ status: true, data: result });
       }
