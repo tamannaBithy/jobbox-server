@@ -47,10 +47,19 @@ const run = async () => {
       const email = req.body.email;
       const name = req.body.name;
       const status = req.body.status;
+      const appliedDate = req.body.appliedDate;
 
       const filter = { _id: ObjectId(jobId) };
       const updateDoc = {
-        $push: { applicants: { id: ObjectId(userId), email, name, status } },
+        $push: {
+          applicants: {
+            id: ObjectId(userId),
+            email,
+            name,
+            status,
+            appliedDate,
+          },
+        },
       };
 
       const result = await jobCollection.updateOne(filter, updateDoc);
