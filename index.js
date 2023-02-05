@@ -201,8 +201,8 @@ const run = async () => {
     });
 
     app.get("/approved-jobs", async (req, res) => {
-      const status = req.body.status;
-      const email = req.body.email;
+      const status = req.query.status;
+      const email = req.query.email;
       const query = {
         applicants: { $elemMatch: { email: email, status: status } },
       };
