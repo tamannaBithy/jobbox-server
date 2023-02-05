@@ -211,6 +211,18 @@ const run = async () => {
 
       res.send({ status: true, data: result });
     });
+
+    app.get("/searchByDate", async (req, res) => {
+      const appliedDate = req.query.appliedDate;
+      const email = req.query.email;
+      const query = {
+        applicants: { $elemMatch: { email: email, appliedDate: appliedDate } },
+      };
+      const cursor = jobCollection.find(query).project({ applicants: 0 });
+      const result = await cursor.toArray();
+
+      res.send({ status: true, data: result });
+    });
   } finally {
   }
 };
