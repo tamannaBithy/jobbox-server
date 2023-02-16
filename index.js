@@ -21,6 +21,7 @@ const run = async () => {
     const db = client.db("blogPost");
     const userCollection = db.collection("user");
     const jobCollection = db.collection("job");
+    const messageCollection = db.collection("message");
 
     app.post("/user", async (req, res) => {
       const user = req.body;
