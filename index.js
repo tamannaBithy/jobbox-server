@@ -250,6 +250,15 @@ const run = async () => {
         data: { _id: messageId, members, conversations: [] },
       });
     });
+
+    app.patch("/send-message", async (req, res) => {
+      const { _id, message, author } = req.body;
+      const query = { _id: ObjectId(_id) };
+      const result = await messageCollection.updateOne(query, {
+        $push: { conversations: { message, author } },
+      });
+      return res.send({ status: true, data: result });
+    });
   } finally {
   }
 };
