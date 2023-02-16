@@ -223,6 +223,32 @@ const run = async () => {
 
       res.send({ status: true, data: result });
     });
+
+    app.post("/create-message", async (req, res) => {
+      const members = req.body;
+      const prev = await messageCollection.findOne({
+        members: {
+          $all: [
+            { $elemMatch: { email: members[0].email } },
+            { $elemMatch: { email: members[1].email } },
+          ],
+        },
+      });
+      if (prev) {
+        prev._id.toString();
+        return res.send({ status: true, data: prev });
+      }
+
+      const result = await messageCollection.insertOne({
+        members,
+        conversations: [],
+      });
+      const messageId = result?.insertedId?.toString();
+      res.send({
+        status: true,
+        data: { _id: messageId, members, conversations: [] },
+      });
+    });
   } finally {
   }
 };
