@@ -257,7 +257,20 @@ const run = async () => {
       const result = await messageCollection.updateOne(query, {
         $push: { conversations: { message, author } },
       });
-      return res.send({ status: true, data: result });
+      res.send({ status: true, data: result });
+    });
+
+    app.get("/message/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { members: { $elemMatch: { email } } };
+      const data = await messageCollection.find(query).toArray();
+      res.send({ status: true, data });
+    });
+
+    app.get("/conversation/:id", async (req, res) => {
+      const query = { _id: ObjectId(req.params.id) };
+      const result = await messageCollection.findOne(query);
+      res.send({ status: true, data: result });
     });
   } finally {
   }
